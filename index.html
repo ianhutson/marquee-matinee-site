@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Delete Account - Marquee Matinee</title>
+  <style>
+    * { margin: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #0D0D12;
+      color: #F5F0E8;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .card {
+      max-width: 480px;
+      width: 100%;
+      background: #161620;
+      border-radius: 16px;
+      padding: 40px 32px;
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+    h1 { font-size: 24px; font-weight: 700; margin-bottom: 8px; }
+    .subtitle { color: #8888A0; font-size: 15px; line-height: 1.5; margin-bottom: 32px; }
+    label { display: block; font-size: 12px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: #8888A0; margin-bottom: 8px; }
+    input { width: 100%; padding: 14px 16px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.06); background: #252530; color: #F5F0E8; font-size: 16px; margin-bottom: 24px; outline: none; }
+    input:focus { border-color: #FF2D78; }
+    input::placeholder { color: #3A3A4A; }
+    .warning { background: rgba(255,69,101,0.1); border: 1px solid rgba(255,69,101,0.3); border-radius: 10px; padding: 16px; margin-bottom: 24px; font-size: 14px; line-height: 1.5; color: #FF4565; }
+    button { width: 100%; padding: 16px; border-radius: 12px; border: none; font-size: 16px; font-weight: 600; cursor: pointer; }
+    button:hover { opacity: 0.85; }
+    button:disabled { opacity: 0.4; cursor: not-allowed; }
+    .btn-delete { background: #FF4565; color: white; }
+    .result { text-align: center; padding: 20px 0; font-size: 15px; line-height: 1.5; display: none; }
+    .result.success { color: #00E5CC; }
+    .result.error { color: #FF4565; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Delete Your Marquee Matinee Account</h1>
+    <p class="subtitle">Enter the email address associated with your Marquee Matinee account. This action is permanent and cannot be undone.</p>
+
+    <div id="form-section">
+      <label for="email">Email Address</label>
+      <input type="email" id="email" placeholder="you@example.com" required />
+
+      <div class="warning">This will permanently delete your Marquee Matinee account and all associated data including your leagues, submissions, votes, and profile information.</div>
+
+      <button class="btn-delete" onclick="handleDelete()" id="delete-btn">Delete My Account</button>
+    </div>
+
+    <div id="result" class="result"></div>
+  </div>
+
+  <script>
+    var API_URL = "https://eurjyigwjtbmdoamtmsr.supabase.co/functions/v1/delete-account";
+
+    async function handleDelete() {
+      var email = document.getElementById("email").value.trim();
+      if (!email) { alert("Please enter your email address."); return; }
+
+      var btn = document.getElementById("delete-btn");
+      btn.disabled = true;
+      btn.textContent = "Processing...";
+
+      try {
+        var res = await fetch(API_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email: email })
+        });
+        var data = await res.json();
+        var result = document.getElementById("result");
+        document.getElementById("form-section").style.display = "none";
+        result.style.display = "block";
+
+        if (res.ok) {
+          result.className = "result success";
+          result.textContent = "Your account deletion request has been received. Your account and all associated data will be deleted within 48 hours.";
+        } else {
+          result.className = "result error";
+          result.textContent = data.error || "Something went wrong. Please try again.";
+        }
+      } catch (e) {
+        btn.disabled = false;
+        btn.textContent = "Delete My Account";
+        alert("Network error. Please try again.");
+      }
+    }
+  </script>
+</body>
+</html>
