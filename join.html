@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Join League - Marquee Matinee</title>
+    <style>
+      * {
+        margin: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background: #0d0d12;
+        color: #f5f0e8;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 24px;
+      }
+      .card {
+        max-width: 480px;
+        width: 100%;
+        background: #161620;
+        border-radius: 16px;
+        padding: 48px 32px;
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        text-align: center;
+        animation: fadeUp 0.5s ease-out;
+      }
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(16px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .emoji {
+        font-size: 36px;
+        line-height: 1;
+        margin-bottom: 12px;
+      }
+      .brand {
+        font-size: 18px;
+        font-weight: 700;
+        letter-spacing: 3px;
+        color: #ff2d78;
+        text-transform: uppercase;
+        margin-bottom: 32px;
+      }
+      h1 {
+        font-size: 24px;
+        font-weight: 700;
+        margin-bottom: 12px;
+      }
+      .message {
+        color: #8888a0;
+        font-size: 15px;
+        line-height: 1.6;
+        margin-bottom: 28px;
+      }
+      .code-box {
+        background: #252530;
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 8px;
+      }
+      .code-label {
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        color: #8888a0;
+        margin-bottom: 8px;
+      }
+      .code {
+        font-size: 32px;
+        font-weight: 700;
+        letter-spacing: 6px;
+        color: #ffb800;
+      }
+      .copied {
+        font-size: 13px;
+        color: #00e5cc;
+        height: 20px;
+        margin-bottom: 24px;
+      }
+      .btn {
+        display: inline-block;
+        width: 100%;
+        padding: 16px;
+        border-radius: 12px;
+        border: none;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        background: #ff2d78;
+        color: white;
+        text-decoration: none;
+        margin-bottom: 12px;
+      }
+      .btn:hover {
+        opacity: 0.85;
+      }
+      .btn-secondary {
+        background: #252530;
+        color: #f5f0e8;
+      }
+      .hint {
+        color: #3a3a4a;
+        font-size: 13px;
+        margin-top: 12px;
+      }
+      .no-code {
+        color: #8888a0;
+        font-size: 15px;
+        line-height: 1.6;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <div class="emoji">🎬</div>
+      <div class="brand">MARQUEE MATINEE</div>
+
+      <div id="has-code" style="display: none">
+        <h1>You've Been Invited!</h1>
+        <p class="message">
+          Someone wants you in their movie league. Open the app and use this
+          code to join.
+        </p>
+
+        <div class="code-box" id="code-box" onclick="copyCode()">
+          <div class="code-label">INVITE CODE</div>
+          <div class="code" id="code-display"></div>
+        </div>
+        <div class="copied" id="copied-msg"></div>
+
+        <a class="btn" id="open-app-link" href="#">Open Marquee Matinee</a>
+        <button class="btn btn-secondary" onclick="copyCode()">
+          Copy Code
+        </button>
+
+        <p class="hint">
+          Don't have the app yet? Search "Marquee Matinee" on the App Store or
+          Google Play.
+        </p>
+      </div>
+
+      <div id="no-code" style="display: none">
+        <h1>Join a League</h1>
+        <p class="no-code">
+          This link is missing an invite code. Ask the person who invited you to
+          send the link again.
+        </p>
+      </div>
+    </div>
+
+    <script>
+      var params = new URLSearchParams(window.location.search);
+      var code = (params.get("code") || "").trim().toUpperCase();
+
+      if (code) {
+        document.getElementById("has-code").style.display = "block";
+        document.getElementById("code-display").textContent = code;
+        document.getElementById("open-app-link").href =
+          "marqueematinee://join?code=" + code;
+      } else {
+        document.getElementById("no-code").style.display = "block";
+      }
+
+      function copyCode() {
+        navigator.clipboard.writeText(code).then(function () {
+          document.getElementById("copied-msg").textContent = "Copied!";
+          setTimeout(function () {
+            document.getElementById("copied-msg").textContent = "";
+          }, 2000);
+        });
+      }
+    </script>
+  </body>
+</html>
